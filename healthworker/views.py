@@ -219,6 +219,8 @@ class GetCitizenList(generics.ListAPIView):
     serializer_class = GetCitizenListSerializer
     model = serializer_class.Meta.model
     permission_classes = [IsAuthenticated]
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ['familyHead__familyId' , 'familyHead__mobileNo' , 'familyHead__name' , 'memberId' , 'name' , 'mobileNo' ]
     paginate_by = 100
     def get_queryset(self ):
         """
@@ -262,6 +264,8 @@ class GetFamilyList(generics.ListAPIView):
     serializer_class = GetFamilyHeadListSerialzier
     model = serializer_class.Meta.model
     permission_classes = [IsAuthenticated]
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ['familyHead__familyId' , 'familyHead__mobileNo' , 'familyHead__name' , 'memberId' , 'name' , 'mobileNo' ]
     paginate_by = 100
     def get_queryset(self ):
         queryset = self.model.objects.all()

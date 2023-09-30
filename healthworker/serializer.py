@@ -107,7 +107,7 @@ class GetFamilyHeadListSerialzier(serializers.ModelSerializer):
 class GetCitizenListSerializer(serializers.ModelSerializer):
     class Meta:
         model = familyMembers
-        fields = ('id','name' , 'gender' , 'age' , 'mobileNo' , 'familyHead' ,'aadharAndAbhaConsent' ,'aadharCard' ,  'abhaId' ,
+        fields = ('id','name' , 'gender' , 'age' , 'mobileNo' , 'familyHead' ,'aadharAndAbhaConsent' ,'aadharCard' ,  'abhaId' ,'memberId',
                    'pulse', 'bloodPressure','weight' , 'height' , 'BMI' ,
                   'questionsConsent','Questionnaire','bloodConsent' , 'bloodCollectionLocation' )
 
