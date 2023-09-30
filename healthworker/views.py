@@ -245,29 +245,17 @@ class GetCitizenList(generics.ListAPIView):
             today = timezone.now().date() 
             queryset = self.model.objects.filter(familySurveyor = request.user , created_date__day = today.day)
             serializer = self.get_serializer(queryset , many = True ).data
-            return Response({
-                'message' : 'data feteched successfully',
-                'status' : 'success',
-                'data' : serializer ,
-                } , status= status.HTTP_200_OK)
+            return Response(serializer , status= status.HTTP_200_OK)
     
         elif choice == 'All':
             total_list = self.get_queryset().filter(familySurveyor = request.user)
             serializer = self.get_serializer(total_list , many = True ).data
-            return Response({
-                'message' : 'data feteched successfully',
-                'status' : 'success',
-                'data' : serializer ,
-            } , status= status.HTTP_200_OK)
+            return Response(serializer  , status= status.HTTP_200_OK)
         
         elif choice == 'Partially':
             queryset = familyHeadDetails.objects.filter(partialSubmit = True , user = request.user)
             serializer = GetFamilyHeadListSerialzier(queryset , many = True ).data
-            return Response({
-                'message' : 'data feteched successfully',
-                'status' : 'success',
-                'data' : serializer ,
-                 } , status= status.HTTP_200_OK)
+            return Response({ serializer } , status= status.HTTP_200_OK)
         
 
 class GetFamilyList(generics.ListAPIView):
@@ -297,20 +285,12 @@ class GetFamilyList(generics.ListAPIView):
             today = timezone.now().date() 
             queryset = self.model.objects.filter(user = request.user , created_date__day = today.day)
             serializer = self.get_serializer(queryset , many = True ).data
-            return Response({
-                'message' : 'data feteched successfully',
-                'status' : 'success',
-                'data' : serializer ,
-                } , status= status.HTTP_200_OK)
+            return Response( serializer  , status= status.HTTP_200_OK)
     
         elif choice == 'All':
             total_list = self.get_queryset().filter(user = request.user)
             serializer = self.get_serializer(total_list , many = True ).data
-            return Response({
-                'message' : 'data feteched successfully',
-                'status' : 'success',
-                'data' : serializer ,
-            } , status= status.HTTP_200_OK)
+            return Response( serializer , status= status.HTTP_200_OK)
         
 
 # The above class is a generic ListAPIView that retrieves blood collection details for family members,
@@ -325,35 +305,34 @@ class GetBloodCollectionDetail(generics.ListAPIView):
 
 
 class DumpExcelInsertxlsx(generics.GenericAPIView):
-    
     parser_classes = [MultiPartParser]
     serializer_class = DumpExcelSerializer
 
     def post(self, request, format=None):
-        # try:
-        if 'excel_file' not in request.FILES:
-            return Response({"status": "error", "message": "No file uploaded."}, status=400)
+        try:
+            if 'excel_file' not in request.FILES:
+                return Response({"status": "error", "message": "No file uploaded."}, status=400)
+            excel_file = request.FILES["excel_file"]
+    
+            if excel_file.size == 0 or excel_file.name.endswith(".xlsx") != True:
+                return Response({"status": "error",
+                                "message": "only .xlsx file is supported."},
+                                status=400)
 
-        excel_file = request.FILES["excel_file"]
-       
-        if excel_file.size == 0 or excel_file.name.endswith(".xlsx") != True:
-            return Response({"status": "error",
-                             "message": "only .xlsx file is supported."},
-                            status=400)
-
-        workbook = load_workbook(filename=excel_file)
-        sheet_name = workbook.sheetnames[0]
-        worksheet = workbook[sheet_name]
-        # for r in range(1, worksheet.max_row+1):
-        #     for c in range(1, worksheet.max_column+1):
-        #         # print(c)
-        #         cell_value = str(worksheet.cell(r, c).value)
-        for row in worksheet.iter_rows(min_row=2, values_only=True):
-            user = CustomUser.objects.create_user(username=row[0], password=row[1], phoneNumber=row[2], section_id=row[3] )
-            group = Group.objects.get(name = 'healthworker')
-            user.groups.add(group )
-                       
-        return Response("Done")
+            workbook = load_workbook(filename=excel_file)
+            sheet_name = workbook.sheetnames[0]
+            worksheet = workbook[sheet_name]
+            for row in worksheet.iter_rows(min_row=2, values_only=True):
+                user = CustomUser.objects.create_user(username=row[0], password=row[1], phoneNumber=row[2],section_id=row[3] )
+                group = Group.objects.get(name = 'healthworker')
+                user.groups.add(group)
+                        
+            return Response({'message' : 'File Uploaded Successfully and users created !!' , 
+                            'status' :"success"} , status= status.HTTP_201_CREATED)
+        
+        except:
+            return Response({'message' : 'File Uploaded Successfully and users created !!', 
+                            'status' :"success"} , status= status.HTTP_400_BAD_REQUEST)
 
 
 
