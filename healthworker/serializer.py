@@ -83,7 +83,6 @@ class PostSurveyFormSerializer(serializers.ModelSerializer):
         data.pop('longitude', None)
         head = familyHeadDetails.objects.create(**data)
         member_id_counter = 1
-
         for family in familyMembers_details:
             member_id = str(head.familyId) + '-' + str(member_id_counter).zfill(2)
             member_id_counter += 1

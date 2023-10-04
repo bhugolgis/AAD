@@ -5,6 +5,7 @@ from .serializers import *
 from rest_framework import filters
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.parsers import MultiPartParser
 
 
 
@@ -20,7 +21,7 @@ class GetPhleboFamilyMembersDetails(generics.ListAPIView):
 class PostBloodTestReport(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = PostBloodTestReportSerialzier
-    # parser_classes = [MultiPartParser]
+    parser_classes = [MultiPartParser]
 
     def post(self , request):
         serializer = self.get_serializer(data = request.data)

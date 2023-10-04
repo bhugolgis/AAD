@@ -17,8 +17,9 @@ from django.contrib.auth.models import Group
 
 class verifyMobileNumber(APIView):
     def get(self , request ,mobileNo):
-        data = familyHeadDetails.objects.filter( mobileNo = mobileNo).exists()
-        if data:
+        family_head = familyHeadDetails.objects.filter( mobileNo = mobileNo).exists()
+        user = CustomUser.objects.filter(phoneNumber = mobileNo).exists()
+        if family_head or user:
             return Response({'status' : 'error' ,
                             'message' : 'Mobile Number Already exist' } , status= status.HTTP_400_BAD_REQUEST)
         else:
@@ -82,7 +83,7 @@ class PostSurveyForm(generics.GenericAPIView):
                     key , value = list(value[1].items())[0]
                     error_message = key + " ," +value[0]
             return Response({'status': 'error',
-                            'message' : serializer.errors} , status = status.HTTP_400_BAD_REQUEST)
+                            'message' : error_message} , status = status.HTTP_400_BAD_REQUEST)
 
 
 # The class `GetFamilyHeadList` is a generic ListAPIView that retrieves a list of family head details
@@ -285,6 +286,7 @@ class GetFamilyList(generics.ListAPIView):
         indicates that the data was fetched successfully, the status indicates success, and the data
         contains the serialized queryset. The status code of the response is 200 (OK).
         """
+
         if choice == 'Today':
             today = timezone.now().date() 
             queryset = self.model.objects.filter(user = request.user , created_date__day = today.day)
@@ -327,7 +329,8 @@ class DumpExcelInsertxlsx(generics.GenericAPIView):
             sheet_name = workbook.sheetnames[0]
             worksheet = workbook[sheet_name]
             for row in worksheet.iter_rows(min_row=2, values_only=True):
-                user = CustomUser.objects.create_user(username=row[0], password=row[1], phoneNumber=row[2],section_id=row[3] )
+                user = CustomUser.objects.create_user(name = row[0] , username=row[1],
+                                                      password=row[2], phoneNumber=row[3],section_id=row[4] )
                 group = Group.objects.get(name = 'healthworker')
                 user.groups.add(group)
                         
@@ -335,7 +338,7 @@ class DumpExcelInsertxlsx(generics.GenericAPIView):
                             'status' :"success"} , status= status.HTTP_201_CREATED)
         
         except:
-            return Response({'message' : 'File Uploaded Successfully and users created !!', 
+            return Response({'message' : 'Something Went wrong please check you File', 
                             'status' :"success"} , status= status.HTTP_400_BAD_REQUEST)
 
 

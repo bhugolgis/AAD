@@ -9,7 +9,19 @@ class GetPhleboFamilyMemberDetailSerializer(serializers.ModelSerializer):
 
 
 class PostBloodTestReportSerialzier(serializers.ModelSerializer):
+    # barcodeNumber = serializers.CharField(max_length = 50 , required = False) 
+    barcodeNumber =  serializers.ListField(child=serializers.CharField(max_length = 50 , required = False) , required = False )
     class Meta:
         model = phlebotomist
         fields = ('member','testReport', 'barcodeNumber', 'date')
+
+
+    def create(self , data):
+        TestTubes = list(data.pop('barcodeNumber'))
+        object = phlebotomist.objects.create(**data)
+        for barcode in TestTubes:
+            print(barcode)
+            testtube_object = TestTube.objects.create( phlebo = object , barcodeNumber = barcode)
+
+        return data
 

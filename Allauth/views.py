@@ -233,11 +233,9 @@ class CheckOtp(generics.GenericAPIView):
                     })
 
             else:
-
                 return Response({
                     "status":"error",
                     "message":"User Not Found."
-                
                     })
         else:
 
@@ -588,5 +586,5 @@ class LoginView(generics.GenericAPIView):
                                 'status' : 'error'}, status=400)
         except:
             return Response({
-                'message': 'Email or Password is Invalid',
+                'message': 'Invalid Credentials',
                 'status': 'failed'}, status=400)

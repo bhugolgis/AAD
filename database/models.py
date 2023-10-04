@@ -149,8 +149,14 @@ class phlebotomist(models.Model):
     user = models.ForeignKey(CustomUser , related_name='phlebotomist_user' , on_delete=models.SET_NULL ,  blank = True , null = True  )
     member = models.ForeignKey(familyMembers , related_name='family_Member' ,on_delete=models.SET_NULL , blank = True , null = True )
     testReport = ArrayField(models.CharField(max_length=255 , choices=testChoices , blank = True , null = True ))
-    barcodeNumber =ArrayField( models.CharField(max_length=100 , blank = True , null = True ))
+    # barcodeNumber =ArrayField( models.CharField(max_length=100 , blank = True , null = True ))
     date = models.DateField(blank = True , null = True )
+
+
+class TestTube(models.Model):
+    phlebo = models.ForeignKey(phlebotomist , related_name='phlebo_details' , on_delete=models.SET_NULL , blank = True , null = True)
+    barcodeNumber = models.CharField(max_length=50 , blank = True , null = True)
+   
 
     
 class PatientsPathlab(models.Model):
