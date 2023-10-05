@@ -17,11 +17,10 @@ class PostBloodTestReportSerialzier(serializers.ModelSerializer):
 
 
     def create(self , data):
-        TestTubes = list(data.pop('barcodeNumber'))
+        TestTubes = data.pop('barcodeNumber')
+        list = TestTubes[0].split(',')
         object = phlebotomist.objects.create(**data)
-        for barcode in TestTubes:
-            print(barcode)
+        for barcode in list:
             testtube_object = TestTube.objects.create( phlebo = object , barcodeNumber = barcode)
-
         return data
 

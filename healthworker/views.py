@@ -83,7 +83,7 @@ class PostSurveyForm(generics.GenericAPIView):
                     key , value = list(value[1].items())[0]
                     error_message = key + " ," +value[0]
             return Response({'status': 'error',
-                            'message' : error_message} , status = status.HTTP_400_BAD_REQUEST)
+                            'message' :error_message} , status = status.HTTP_400_BAD_REQUEST)
 
 
 # The class `GetFamilyHeadList` is a generic ListAPIView that retrieves a list of family head details
