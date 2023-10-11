@@ -5,7 +5,7 @@ from drf_extra_fields.fields import Base64ImageField
 
 class postFamilyMemberDetailSerializer(serializers.ModelSerializer):
     demandLetter = Base64ImageField(required=False)
-    # familyHead = serializers.IntegerField(required = True )
+    # familyHead = serializers.IntegerField(required = True ) 
     class Meta:
         model = familyMembers
         fields = ('name' , 'gender' , 'age' , 'mobileNo' , 'familyHead' ,'aadharAndAbhaConsent' ,'aadharCard' ,  'abhaId' ,

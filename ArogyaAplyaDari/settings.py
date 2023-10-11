@@ -39,6 +39,8 @@ ALLOWED_HOSTS = ["*"]
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
+    'channels',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -62,6 +64,12 @@ INSTALLED_APPS = [
  
 
 ]
+
+CHANNEL_LAYERS = {
+       'default': {
+           'BACKEND': 'channels.layers.InMemoryChannelLayer',
+       },
+   }
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -92,7 +100,8 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'ArogyaAplyaDari.wsgi.application'
+# WSGI_APPLICATION = 'ArogyaAplyaDari.wsgi.application'
+ASGI_APPLICATION = 'ArogyaAplyaDari.asgi.application'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': ('knox.auth.TokenAuthentication',),

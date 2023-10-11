@@ -91,7 +91,7 @@ class familyMembers(models.Model):
     # user = models.ForeignKey(CustomUser , related_name="updatefamilysurveyor",on_delete=models.CASCADE,null=True,blank=True )
     memberId = models.CharField(max_length=255 , blank = True , null = True )
     name = models.CharField(max_length=900,blank=True,null=True)
-    gender = models.CharField(max_length=10,blank=True,null=True)
+    gender = models.CharField(max_length=15,blank=True,null=True)
     age  = models.IntegerField(blank = True , null = True)
     mobileNo  = models.BigIntegerField(blank = True , null = True)
     familyHead = models.ForeignKey(familyHeadDetails,related_name="family_head_member",on_delete=models.CASCADE,null=True,blank=True)

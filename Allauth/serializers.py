@@ -153,10 +153,10 @@ class LoginSerializer(serializers.Serializer):
        
         customuser = auth.authenticate(phoneNumber=phoneNumber, password=password)
         
-        if data["phoneNumber"] =="":
+        if data["phoneNumber"] =="" or data["phoneNumber"] == None:
             msg = "Please enter username."
             raise serializers.ValidationError(msg)
-        if data["password"] =="":
+        if data["password"] =="" or data["password"] == None:
             msg = "Please enter password."
             raise serializers.ValidationError(msg)
         if customuser and customuser.is_active:

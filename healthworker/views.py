@@ -75,13 +75,15 @@ class PostSurveyForm(generics.GenericAPIView):
             key, value =list(serializer.errors.items())[0]
             try:
                 key , value = list(value[0].items())[0]
-                error_message =  value[0]
+                error_message =  str(value[0])
             except Exception as e:
                 try:
-                     error_message = key +" ,"+ value[0]
+                     error_message = str(key) + " ," +str(value[0])
                 except:
                     key , value = list(value[1].items())[0]
-                    error_message = key + " ," +value[0]
+                    error_message = str(key) + " ," +str(value[0])
+            print(serializer.errors)
+            print(error_message)
             return Response({'status': 'error',
                             'message' :error_message} , status = status.HTTP_400_BAD_REQUEST)
 
@@ -329,6 +331,9 @@ class DumpExcelInsertxlsx(generics.GenericAPIView):
             sheet_name = workbook.sheetnames[0]
             worksheet = workbook[sheet_name]
             for row in worksheet.iter_rows(min_row=2, values_only=True):
+                already_exist = CustomUser.objects.filter(username =row[1] , phoneNumber=row[3]  ).exists()
+                if already_exist:
+                    continue
                 user = CustomUser.objects.create_user(name = row[0] , username=row[1],
                                                       password=row[2], phoneNumber=row[3],section_id=row[4] )
                 group = Group.objects.get(name = 'healthworker')
@@ -337,8 +342,9 @@ class DumpExcelInsertxlsx(generics.GenericAPIView):
             return Response({'message' : 'File Uploaded Successfully and users created !!' , 
                             'status' :"success"} , status= status.HTTP_201_CREATED)
         
-        except:
+        except Exception as e:
             return Response({'message' : 'Something Went wrong please check you File', 
+                             'error' : str(e),
                             'status' :"success"} , status= status.HTTP_400_BAD_REQUEST)
 
 

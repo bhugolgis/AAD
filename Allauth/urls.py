@@ -17,6 +17,7 @@ urlpatterns = [
         re_path(r'^GetSectionListAPI', GetSectionListAPI.as_view(), name='GetSectionListAPI'),
         path('InsertSupervisorAPI' , InsertSupervisorAPI.as_view() , name = 'InsertSupervisorAPI'),
         path('InsertHealthWorkerAPI' , InsertHealthWorkerAPI.as_view() , name = 'InsertHealthWorkerAPI'),
+        path('InsertPhlebotomistAPI' , InsertPhlebotomistAPI.as_view() , name = 'InsertPhlebotomistAPI'),
         path('usersList', UserGroupFilterView.as_view(), name='user-list'),
         path('SendOtp',views.SendOtp),
         path('CheckOtp',CheckOtp.as_view(),name="CheckOtp"),
