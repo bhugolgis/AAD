@@ -77,6 +77,9 @@ class familyHeadDetails(models.Model):
     user = models.ForeignKey(CustomUser,related_name="surveyDoneBy", on_delete=models.CASCADE,null=True,blank=True)
     partialSubmit = models.BooleanField(default= False)
     created_date= models.DateTimeField(auto_now_add= True )
+    isLabTestAdded = models.BooleanField(default=False)
+    isSampleCollected = models.BooleanField(default=False)
+    isLabTestReportGenerated = models.BooleanField(default=False)
 
    
     
@@ -111,6 +114,9 @@ class familyMembers(models.Model):
     bloodConsent = models.BooleanField(default= False)
     cbacScore = models.IntegerField(default=0)
     created_date= models.DateTimeField(auto_now= True)
+    isLabTestAdded = models.BooleanField(default=False)
+    isSampleCollected = models.BooleanField(default=False)
+    isLabTestReportGenerated = models.BooleanField(default=False)
 
 
 class phlebotomist(models.Model):
@@ -159,26 +165,105 @@ class TestTube(models.Model):
    
 
     
-class PatientsPathlab(models.Model):
-	pathLabPatient = models.ForeignKey(CustomUser,related_name="pathLabPatient",on_delete=models.CASCADE,null=True,blank=True)
-	PathLab = models.ForeignKey(CustomUser,related_name="PathLab",on_delete=models.CASCADE,null=True,blank=True)
-	ReportCheckByDoctor = models.ForeignKey(CustomUser,related_name="ReportCheckByDoctor",on_delete=models.CASCADE,null=True,blank=True)
-	TestAssignedAndReport = models.JSONField(null=True,blank=True)
-	doctorRemarks = models.CharField(max_length=500,blank=True,null=True)
-	PathLabRemarks = models.CharField(max_length=500,blank=True,null=True)
-	response_date = models.DateTimeField(blank=True,null=True)
-	created_date = models.DateTimeField(auto_now=True)
-	isCompleted = models.BooleanField(default=False)
+class PatientsPathlab(models.Model):    
+    testChoices = [
+         ('HB' , 'HB') , 
+         ('CBC' , 'CBC') , 
+         ('Platelet Count' , 'Platelet Count') , 
+         ('PT/INR' , 'PT/INR') , 
+         ('RBS' , 'RBS') , 
+         ('S. Total Bilirubin' , 'S. Total BilirubinB') , 
+         ('S. Direct Bilirubin' , 'S. Direct Bilirubin') , 
+         ('SGPT/ALT' , 'SGPT/ALT') , 
+         ('SGOT/AST' , 'SGOT/AST') , 
+         ('Urea / BUN' , 'Urea / BUN') , 
+         ('S. Creatinine' , 'S. Creatinine') , 
+         ('ALP' , 'ALP') , 
+         ('S. Total Proteins' , 'S. Total Proteins') , 
+         ('S. Albumin' , 'S. Albumin') , 
+         ('S. Total Calcium' , 'S. Total Calcium') , 
+         ('S. Uric Acid' , 'S. Uric Acid') , 
+         ('S. Cholesterol' , 'S. Cholesterol') , 
+         ('S. Triglycerides ' , 'S. Triglycerides ') , 
+         ('S. HDL (Direct)' , 'S. HDL (Direct)') , 
+         ('LDL' , 'LDL') , 
+         ('VLDL' , 'VLDL') , 
+         ('Amylase' , 'Amylase') , 
+         ('T3' , 'T3') , 
+         ('T4' , 'T4') , 
+         ('HbA1C' , 'HbA1C') , 
+         ('S. Electrolytes' , 'S. Electrolytes') , 
+         ('S. TIBC' , 'S. TIBC') , 
+         ('LDH' , 'LDH') , 
+         ('Vit. D' , 'Vit. D') , 
+         ('Vit. B12' , 'Vit. B12') , 
+         ('Immunoassays' , 'Immunoassays') ,]
+ 
+    
+    patientFamilyMember = models.ForeignKey(familyMembers , related_name='patientFamilyMember' ,on_delete=models.SET_NULL , blank = True , null = True )
+    suggested_by_doctor = models.ForeignKey(CustomUser , related_name='suggested_by_doctor' , on_delete=models.SET_NULL ,  blank = True , null = True  )
+    suggested_date = models.DateTimeField(auto_now=True)
+    LabTestSuggested = ArrayField(models.CharField(max_length=255 , choices=testChoices ,default=list ))
+    PatientSampleTaken = models.BooleanField(default=False)
 
 
-class doctorConsultancy(models.Model):
-    #patientLabTest to patientTest
-    PatientsPathReport = models.ForeignKey(PatientsPathlab,related_name="PatientsPathReport",on_delete=models.CASCADE,null=True,blank=True)
-    PatientsConsultancy = models.ForeignKey(familyMembers,related_name="PatientsConsultancy",on_delete=models.CASCADE,null=True,blank=True)
-    assignedDoctor = models.ForeignKey(CustomUser,related_name="assignedDoctor",on_delete=models.CASCADE,null=True,blank=True)
-    doctor_name = models.CharField(max_length=500,blank=True,null=True) 
-    specialization = models.CharField(max_length=500,blank=True,null=True)
+    # pathLabPatient = models.ForeignKey(CustomUser,related_name="phlebotomist_user",on_delete=models.CASCADE,null=True,blank=True)
+    PathLab = models.ForeignKey(CustomUser,related_name="PathLab",on_delete=models.CASCADE,null=True,blank=True)
+    ReportCheckByDoctor = models.ForeignKey(CustomUser,related_name="ReportCheckByDoctor",on_delete=models.CASCADE,null=True,blank=True)
+    LabTestReport = models.JSONField(default = dict,null=True,blank=True)
     doctorRemarks = models.CharField(max_length=500,blank=True,null=True)
+    PathLabRemarks = models.CharField(max_length=500,blank=True,null=True)
+    response_date = models.DateTimeField(blank=True,null=True)
+    created_date = models.DateTimeField(auto_now=True)
+    isCompleted = models.BooleanField(default=False)
+
+
+
+class AmoConsultancy(models.Model):
+    #patientLabTest to patientTest
+    AmoPatientsPathReport = models.ForeignKey(PatientsPathlab,related_name="AmoPatientsPathReport",on_delete=models.CASCADE,null=True,blank=True)
+    AmoPatientsConsultancy = models.ForeignKey(familyMembers,related_name="AmoPatientsConsultancy",on_delete=models.CASCADE,null=True,blank=True)
+    AmoassignedDoctor = models.ForeignKey(CustomUser,related_name="AmoassignedDoctor",on_delete=models.CASCADE,null=True,blank=True)
+    Amodoctor_name = models.CharField(max_length=500,blank=True,null=True) 
+    Amospecialization = models.CharField(max_length=500,blank=True,null=True)
+    AmodoctorRemarks = models.CharField(max_length=500,blank=True,null=True)
+    AmofileUpload = models.FileField(upload_to='doctorFolder',blank=True)
+    created_date = models.DateTimeField(auto_now_add=True)
+    isCompleted = models.BooleanField(default=False)
+
+
+class PrimaryConsultancy(models.Model):
+    #patientLabTest to patientTest
+    PriPatientsPathReport = models.ForeignKey(PatientsPathlab,related_name="PriPatientsPathReport",on_delete=models.CASCADE,null=True,blank=True)
+    PriPatientsConsultancy = models.ForeignKey(familyMembers,related_name="PriPatientsConsultancy",on_delete=models.CASCADE,null=True,blank=True)
+    PriassignedDoctor = models.ForeignKey(CustomUser,related_name="PriassignedDoctor",on_delete=models.CASCADE,null=True,blank=True)
+    PriDoctor_name = models.CharField(max_length=500,blank=True,null=True) 
+    Prispecialization = models.CharField(max_length=500,blank=True,null=True)
+    PridoctorRemarks = models.CharField(max_length=500,blank=True,null=True)
+    fileUpload = models.FileField(upload_to='doctorFolder',blank=True)
+    created_date = models.DateTimeField(auto_now_add=True)
+    isCompleted = models.BooleanField(default=False)
+
+class SecondaryConsultancy(models.Model):
+    #patientLabTest to patientTest
+    SecPatientsPathReport = models.ForeignKey(PatientsPathlab,related_name="SecPatientsPathReport",on_delete=models.CASCADE,null=True,blank=True)
+    SecPatientsConsultancy = models.ForeignKey(familyMembers,related_name="SecPatientsConsultancy",on_delete=models.CASCADE,null=True,blank=True)
+    SecSecassignedDoctor = models.ForeignKey(CustomUser,related_name="SecassignedDoctor",on_delete=models.CASCADE,null=True,blank=True)
+    Secdoctor_name = models.CharField(max_length=500,blank=True,null=True) 
+    Secspecialization = models.CharField(max_length=500,blank=True,null=True)
+    SecdoctorRemarks = models.CharField(max_length=500,blank=True,null=True)
+    SecfileUpload = models.FileField(upload_to='doctorFolder',blank=True)
+    created_date = models.DateTimeField(auto_now_add=True)
+    isCompleted = models.BooleanField(default=False)
+
+class TertiaryConsultancy(models.Model):
+    #patientLabTest to patientTest
+    TerPatientsPathReport = models.ForeignKey(PatientsPathlab,related_name="TerPatientsPathReport",on_delete=models.CASCADE,null=True,blank=True)
+    TerPatientsConsultancy = models.ForeignKey(familyMembers,related_name="TerPatientsConsultancy",on_delete=models.CASCADE,null=True,blank=True)
+    TerassignedDoctor = models.ForeignKey(CustomUser,related_name="TerassignedDoctor",on_delete=models.CASCADE,null=True,blank=True)
+    Terdoctor_name = models.CharField(max_length=500,blank=True,null=True) 
+    Terspecialization = models.CharField(max_length=500,blank=True,null=True)
+    TerdoctorRemarks = models.CharField(max_length=500,blank=True,null=True)
     fileUpload = models.FileField(upload_to='doctorFolder',blank=True)
     created_date = models.DateTimeField(auto_now_add=True)
     isCompleted = models.BooleanField(default=False)
