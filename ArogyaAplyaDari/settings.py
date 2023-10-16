@@ -124,15 +124,17 @@ REST_FRAMEWORK = {
 #    }
 # }
 
+
+
 DATABASES = {
    'default': {
        'ENGINE': 'django.contrib.gis.db.backends.postgis',
     #    'NAME': 'DemoNbr',
-       'NAME':'AAD',
+       'NAME':'AADb',
        'USER': 'postgres',
-       'PASSWORD':'admin',
-       'HOST' : '10.202.100.7',
-    #    'HOST' : 'localhost',
+       'PASSWORD':'password',
+    #    'HOST' : '10.202.100.7',
+       'HOST' : 'localhost',
        'PORT': '5432',
    }
 }

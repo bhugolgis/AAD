@@ -29,8 +29,16 @@ class section(models.Model):
     healthPost = models.ForeignKey(healthPost , related_name="healthPost_name" , on_delete=models.SET_NULL , blank = True , null = True )
     sectionName = models.CharField(max_length=255 , blank = True , null = True )
 
+
+class dispensary(models.Model):
+    disphealthPost = models.ForeignKey(healthPost , related_name="disp_healthpost_name" , on_delete=models.SET_NULL , blank= True , null = True )
+    dispensaryName = models.CharField(max_length=255 , blank = True , null = True )
+
+
     def __str__(self) -> str:
          return self.sectionName
+
+
     
 class CustomUser(AbstractUser, PermissionsMixin):
     name=models.CharField(max_length=300,blank=True,null=True)
@@ -40,6 +48,10 @@ class CustomUser(AbstractUser, PermissionsMixin):
     otpChecked = models.BooleanField(default=False)
     supervisor = models.ForeignKey('CustomUser',related_name="supervisorId",on_delete=models.CASCADE,null=True,blank=True)
     section = models.ForeignKey(section , related_name="section_name" , on_delete=models.SET_NULL , blank = True , null = True )
+    ward = models.ForeignKey(ward , related_name="wardAmo_mo_name" , on_delete=models.SET_NULL , blank = True , null = True )
+    health_Post = models.ForeignKey(healthPost , related_name="healthpostAmo_mo_name" , on_delete=models.SET_NULL , blank = True , null = True )
+    area = models.ForeignKey(area , related_name="areaAmo_mo_name" , on_delete=models.SET_NULL , blank = True , null = True )
+    dispensary = models.ForeignKey(dispensary , related_name="dispensary_name" , on_delete=models.SET_NULL , blank = True , null = True )
 
     USERNAME_FIELD = 'phoneNumber'
     REQUIRED_FIELDS = []
@@ -216,6 +228,7 @@ class PatientsPathlab(models.Model):
     response_date = models.DateTimeField(blank=True,null=True)
     created_date = models.DateTimeField(auto_now=True)
     isCompleted = models.BooleanField(default=False)
+    citizenRejectedLabTest = models.BooleanField(default=False)
 
 
 

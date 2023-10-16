@@ -5,7 +5,7 @@ from knox.views import LogoutView
 
 
 urlpatterns = [
-        # path('CustomLoginAPI' , CustomLoginAPI.as_view() , name = 'CustomLoginAPI'),
+        path('CustomLoginAPI' , CustomLoginAPI.as_view() , name = 'CustomLoginAPI'),
         path('AddWardAPI', AddWardAPI.as_view(), name='AddWardAPI'),
         path('AddHealthPostAPI', AddHealthPostAPI.as_view(), name='AddHealthPostAPI'),
         path('AddsectionAPI', AddsectionAPI.as_view(), name='AddsectionAPI'),
@@ -15,7 +15,9 @@ urlpatterns = [
         re_path(r'^GetWardListAPI', GetWardListAPI.as_view(), name='GetWardListAPI'),
         re_path(r'^GethealthPostNameList', GethealthPostNameListAPI.as_view(), name='GethealthPostNameList'),
         re_path(r'^GetSectionListAPI', GetSectionListAPI.as_view(), name='GetSectionListAPI'),
-        path('InsertSupervisorAPI' , InsertSupervisorAPI.as_view() , name = 'InsertSupervisorAPI'),
+        path('InsertAmoAPI' , InsertAmoAPI.as_view() , name = 'InsertAmoAPI'),
+        path('InsertMoAPI' , InsertMoAPI.as_view() , name = 'InsertMoAPI'),
+
         path('InsertHealthWorkerAPI' , InsertHealthWorkerAPI.as_view() , name = 'InsertHealthWorkerAPI'),
         path('InsertPhlebotomistAPI' , InsertPhlebotomistAPI.as_view() , name = 'InsertPhlebotomistAPI'),
         path('usersList', UserGroupFilterView.as_view(), name='user-list'),

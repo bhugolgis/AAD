@@ -19,6 +19,76 @@ from rest_framework.permissions import IsAuthenticated , AllowAny
 from django.contrib.auth.models import Group
 from django.contrib.auth.hashers import check_password
 from drf_extra_fields.fields import Base64ImageField
+from datetime import datetime, timedelta
+from django.db.models import Count
+
+
+class GetDailyCountOfSurvey(generics.GenericAPIView):
+    # serializer_class = AreaSerialzier
+    # permission_classes = [IsAuthenticated]
+
+    def get(self, request ,id):
+        today = datetime.now().date()
+
+        # Count familyHeadDetails objects for today
+        familydailycount = familyHeadDetails.objects.filter(created_date__date=today).count()        # data = area.objects.filter(healthPost__id= id )
+        familyMemberdailycount = familyMembers.objects.filter(created_date__date=today).count()        # data = area.objects.filter(healthPost__id= id )
+
+        # serializer = self.get_serializer(data , many = True).data
+
+        return Response({ "status":"success",
+                "message" : 'data feteched successfully',
+                "data":{"familydailycount":familydailycount,"familyMemberdailycount":familyMemberdailycount}} , status= 200)
+
+
+
+class GetLabTestDashboardCount(generics.GenericAPIView):
+    # serializer_class = AreaSerialzier
+    # permission_classes = [IsAuthenticated]
+
+    def get(self, request ,id):
+        today = datetime.now().date()
+
+        # Count familyHeadDetails objects for today
+        testOpintmentDaily = PatientsPathlab.objects.filter(created_date__date=today,PatientSampleTaken=False).count()        # data = area.objects.filter(healthPost__id= id )
+        dailyTestReceived = PatientsPathlab.objects.filter(created_date__date=today).count()        # data = area.objects.filter(healthPost__id= id )
+        testResultAwaited = PatientsPathlab.objects.filter(created_date__date=today,PatientSampleTaken=True,isCompleted=False).count()        # data = area.objects.filter(healthPost__id= id )
+        citizenRejectedLabTestCount = PatientsPathlab.objects.filter(citizenRejectedLabTest=True,isCompleted=False).count()        # data = area.objects.filter(healthPost__id= id )
+
+
+
+        # familyMemberdailycount = familyMembers.objects.filter(created_date__date=today).count()        # data = area.objects.filter(healthPost__id= id )
+
+        # serializer = self.get_serializer(data , many = True).data
+
+        return Response({ "status":"success",
+                "message" : 'data feteched successfully',
+                "data":{"testOpintmentDaily":testOpintmentDaily,"dailyTestReceived":dailyTestReceived,"testResultAwaited":testResultAwaited,"citizenRejectedLabTestCount":citizenRejectedLabTestCount}} , status= 200)
+
+
+class GetDashboardThree(generics.GenericAPIView):
+    # serializer_class = AreaSerialzier
+    # permission_classes = [IsAuthenticated]
+
+    def get(self, request ,id):
+        today = datetime.now().date()
+
+        # Count familyHeadDetails objects for today
+        PrimaryConsultancyCount = PrimaryConsultancy.objects.all().count()        # data = area.objects.filter(healthPost__id= id )
+        SecondaryConsultancyCount = SecondaryConsultancy.objects.all().count()        # data = area.objects.filter(healthPost__id= id )
+        TertiaryConsultancyCount = TertiaryConsultancy.objects.all().count()        # data = area.objects.filter(healthPost__id= id )
+
+        # familyMemberdailycount = familyMembers.objects.filter(created_date__date=today).count()        # data = area.objects.filter(healthPost__id= id )
+
+        # serializer = self.get_serializer(data , many = True).data
+
+        return Response({ "status":"success",
+                "message" : 'data feteched successfully',
+                "data":{"PrimaryConsultancyCount":PrimaryConsultancyCount,"SecondaryConsultancyCount":SecondaryConsultancyCount,"TertiaryConsultancyCount":TertiaryConsultancyCount}} , status= 200)
+
+
+
+
 
 class GetWardListAPI(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
@@ -53,6 +123,80 @@ class GetSectionListAPI(generics.ListAPIView):
     queryset = section.objects.all()
     filter_backends = (filters.SearchFilter,)
     search_fields = ("healthPost__id", "sectionName")
+
+
+
+class InsertAmoAPI(generics.GenericAPIView):
+    serializer_class = AMoRegisterSerializer
+    parser_classes = [MultiPartParser]
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        # print(request.data["name"], request.data)
+        
+        try:
+            if serializer.is_valid():
+                user = serializer.save()
+                customuser = serializer.validated_data
+                data = InsertAmoSerializer(customuser, context=self.get_serializer_context()).data
+
+                group = Group.objects.get(name='amo')
+                user.groups.add(group)
+
+                return Response({
+                    "status": "success",
+                    "message": "Successfully Registered.",
+                    "data": data,
+                })
+            else:
+                return Response({
+                    "status": "error",
+                    "message": "Validation error",
+                    "errors": serializer.errors,
+                }, status=status.HTTP_400_BAD_REQUEST)
+
+        except Exception as ex:
+            return Response({
+                "status": "error",
+                "message": "Error in Field " + str(ex),
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class InsertMoAPI(generics.GenericAPIView):
+    serializer_class = MoRegisterSerializer
+    parser_classes = [MultiPartParser]
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        # print(request.data["name"], request.data)
+        
+        try:
+            if serializer.is_valid():
+                user = serializer.save()
+                customuser = serializer.validated_data
+                data = InsertAmoSerializer(customuser, context=self.get_serializer_context()).data
+
+                group = Group.objects.get(name='mo')
+                user.groups.add(group)
+
+                return Response({
+                    "status": "success",
+                    "message": "Successfully Registered.",
+                    "data": data,
+                })
+            else:
+                return Response({
+                    "status": "error",
+                    "message": "Validation error",
+                    "errors": serializer.errors,
+                }, status=status.HTTP_400_BAD_REQUEST)
+
+        except Exception as ex:
+            return Response({
+                "status": "error",
+                "message": "Error in Field " + str(ex),
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
 
 
 class InsertSupervisorAPI(generics.GenericAPIView):
@@ -433,6 +577,14 @@ class CustomLoginAPI(generics.GenericAPIView):
                     
                 data = ViewSupervisorSerializer(customuser,context=self.get_serializer_context()).data
                 data["user_group"] = "healthworker"
+                
+            if groups[0] =="amo":
+                data = ViewSupervisorSerializer(customuser,context=self.get_serializer_context()).data
+                data["user_group"] = "amo"
+            if groups[0] =="mo":
+                data = ViewSupervisorSerializer(customuser,context=self.get_serializer_context()).data
+                data["user_group"] = "mo"
+
             # elif groups[0] =="regionalManager":
             #     data = RmSerializer(customuser,context=self.get_serializer_context()).data
             #     data["user_group"] = "regionalManager"
@@ -613,6 +765,43 @@ class LoginView(generics.GenericAPIView):
                             'username': user_data.username,
                             'phoneNumber' : user_data.phoneNumber,
                             'Group': group}, status=200)
+                        
+                    elif group == "amo":
+                        return Response({
+                            'message': 'Login successful',
+                            'Token': token,
+                            'status': 'success',
+                            'email': user_data.emailId,
+                            'name' : user_data.name,         
+                            'username': user_data.username,
+                            'phoneNumber' : user_data.phoneNumber,
+                            # 'ward' : user_data.section.healthPost.ward.wardName ,
+                            'healthPostName' : user_data.health_Post.healthPostName,
+                            'healthPostID' : user_data.health_Post.id,
+                            # 'areaId':user_data.section.healthPost.healthPost.id,
+                            # 'areas':user_data.section.healthPost.area.areas,
+                            # 'sectionId':user_data.section.id,
+                            # 'sectionName':user_data.section.sectionName,
+
+                            'Group': group}, status=200)
+                    elif group == "mo":
+                        return Response({
+                            'message': 'Login successful',
+                            'Token': token,
+                            'status': 'success',
+                            'email': user_data.emailId,
+                            'name' : user_data.name,         
+                            'username': user_data.username,
+                            'phoneNumber' : user_data.phoneNumber,
+                            # 'ward' : user_data.section.healthPost.ward.wardName ,
+                            'healthPostName' : user_data.health_Post.healthPostName,
+                            'healthPostID' : user_data.health_Post.id,
+                            'dispensaryId':user_data.dispensary.id,
+                            'dispensaryName':user_data.dispensary.dispensaryName,
+                            # 'sectionId':user_data.section.id,
+                            # 'sectionName':user_data.section.sectionName,
+                            'Group': group}, status=200)
+            
             else:
                 
                 key, value = list(serializer.errors.items())[0]
@@ -623,3 +812,7 @@ class LoginView(generics.GenericAPIView):
             return Response({
                 'message': 'Invalid Credentials',
                 'status': 'failed'}, status=400)
+            
+            
+         
+            

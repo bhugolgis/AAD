@@ -22,6 +22,80 @@ class InsertSupervisorSerializer(serializers.ModelSerializer):
 		model = CustomUser
 		fields = ("id","name","username","password","emailId","phoneNumber")
 
+
+
+class InsertAmoSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = CustomUser
+		fields = ("id","name","username","password","emailId","phoneNumber","health_Post")
+
+class InsertMoSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = CustomUser
+		fields = ("id","name","username","password","emailId","phoneNumber","healthPost","dispensary")
+
+
+class ViewAmoSerializer(serializers.ModelSerializer):
+	healthpost = serializers.SerializerMethodField()
+	# section = serializers.SerializerMethodField()
+	# ward = serializers.SerializerMethodField()
+	class Meta:
+		model = CustomUser
+		fields = ("id","name","username","emailId","phoneNumber" ,"healthpost" )
+		depth = 3
+	
+	# def get_ward(self , data):
+	# 	try:
+	# 		sectionName = data.section.healthPost.ward.wardName
+	# 	except:
+	# 		sectionName = ''
+	# 	return sectionName
+	# def get_section(self , data):
+	# 	try:
+	# 		sectionName = data.section.sectionName
+	# 	except:
+	# 		sectionName = ''
+	# 	return sectionName
+
+	def get_healthpost(self , data):
+		try:
+			healthpost = data.section.healthPost.healthPostName
+		except:
+			healthpost = ''
+		return healthpost
+
+
+class ViewMoSerializer(serializers.ModelSerializer):
+	healthPost = serializers.SerializerMethodField()
+	dispensary = serializers.SerializerMethodField()
+	# ward = serializers.SerializerMethodField()
+	class Meta:
+		model = CustomUser
+		fields = ("id","name","username","emailId","phoneNumber" ,"healthPost","dispensary" )
+		depth = 3
+	
+	# def get_ward(self , data):
+	# 	try:
+	# 		sectionName = data.section.healthPost.ward.wardName
+	# 	except:
+	# 		sectionName = ''
+	# 	return sectionName
+	def get_dispensary(self , data):
+		try:
+			sectionName = data.dispensary.dispensaryName
+		except:
+			sectionName = ''
+		return sectionName
+
+	def get_healthPost(self , data):
+		try:
+			health_Post = data.health_Post.healthPostName
+		except:
+			health_Post = ''
+		return health_Post
+
+
+
 class ViewSupervisorSerializer(serializers.ModelSerializer):
 	healthpost = serializers.SerializerMethodField()
 	section = serializers.SerializerMethodField()
@@ -124,6 +198,39 @@ class RegisterSerializer(serializers.ModelSerializer):
 		customuser = CustomUser.objects.create_user(**validated_data)
 		
 		return customuser
+
+class MoRegisterSerializer(serializers.ModelSerializer):
+	# ward = serializers.CharField(max_length = 255 , required = True)
+	# healthPostName = serializers.CharField(max_length = 255 , required = True)
+	# section = serializers.CharField(max_length = 255 , required = True)
+	class Meta:
+		model = CustomUser
+		fields = ("name","username", "password", "phoneNumber", "emailId" , "dispensary","health_Post")
+		extra_kwargs = {'password':{'write_only':True}}
+		
+	def create(self,validated_data):
+		# ward = validated_data.pop("ward")
+		# healthPostName = validated_data.pop("healthPostName")
+		customuser = CustomUser.objects.create_user(**validated_data)
+		
+		return customuser
+
+class AMoRegisterSerializer(serializers.ModelSerializer):
+	# ward = serializers.CharField(max_length = 255 , required = True)
+	# healthPostName = serializers.CharField(max_length = 255 , required = True)
+	# section = serializers.CharField(max_length = 255 , required = True)
+	class Meta:
+		model = CustomUser
+		fields = ("name","username", "password", "phoneNumber", "emailId" ,"health_Post")
+		extra_kwargs = {'password':{'write_only':True}}
+		
+	def create(self,validated_data):
+		# ward = validated_data.pop("ward")
+		# healthPostName = validated_data.pop("healthPostName")
+		customuser = CustomUser.objects.create_user(**validated_data)
+		
+		return customuser
+
 
 	# def validate(self, data):
 	# 	if data["name"]=="":
