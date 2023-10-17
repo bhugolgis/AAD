@@ -316,3 +316,49 @@ class AddAreaSerializer(serializers.ModelSerializer):
 		model = area
 		fields = '__all__'
 
+
+
+# class DispensarySerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Dispensary
+#         fields = '__all__'
+        
+class DispensaryHealthPostAssociationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DispensaryHealthPostAssociation
+        fields = '__all__'
+
+class DispensarySerializer(serializers.ModelSerializer):
+    health_post_ids = serializers.ListField(write_only=True, required=False)
+
+    class Meta:
+        model = Dispensary
+        fields = '__all__'
+
+    def create(self, validated_data):
+        health_post_ids = validated_data.pop('health_post_ids', [])
+        dispensary = super().create(validated_data)
+        dispensary.health_posts.set(health_post_ids)
+        return dispensary
+    
+    
+
+class WardSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ward
+        fields = '__all__'
+
+class HealthPostSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = healthPost
+        fields = '__all__'
+
+class AreaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = area
+        fields = '__all__'
+
+class SectionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = section
+        fields = '__all__'

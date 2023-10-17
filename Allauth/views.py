@@ -815,4 +815,59 @@ class LoginView(generics.GenericAPIView):
             
             
          
+
+# from rest_framework import generics
+# from .models import Dispensary
+# from .serializers import DispensarySerializer
+
+class DispensaryListCreateView(generics.ListCreateAPIView):
+    queryset = Dispensary.objects.all()
+    serializer_class = DispensarySerializer
+
+class DispensaryRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Dispensary.objects.all()
+    serializer_class = DispensarySerializer
+    
+    
+class WardListCreateAPIView(generics.ListCreateAPIView):
+    queryset = ward.objects.all()
+    serializer_class = WardSerializer
+    permission_classes = [IsAuthenticated]
+
+class WardRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = ward.objects.all()
+    serializer_class = WardSerializer
+    permission_classes = [IsAuthenticated]
+
+class HealthPostListCreateAPIView(generics.ListCreateAPIView):
+    queryset = healthPost.objects.all()
+    serializer_class = HealthPostSerializer
+    permission_classes = [IsAuthenticated]
+
+class HealthPostRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = healthPost.objects.all()
+    serializer_class = HealthPostSerializer
+    permission_classes = [IsAuthenticated]
+
+class AreaListCreateAPIView(generics.ListCreateAPIView):
+    queryset = area.objects.all()
+    serializer_class = AreaSerializer
+    permission_classes = [IsAuthenticated]
+
+class AreaRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = area.objects.all()
+    serializer_class = AreaSerializer
+    permission_classes = [IsAuthenticated]
+
+class SectionListCreateAPIView(generics.ListCreateAPIView):
+    queryset = section.objects.all()
+    serializer_class = SectionSerializer
+    permission_classes = [IsAuthenticated]
+
+class SectionRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = section.objects.all()
+    serializer_class = SectionSerializer
+    permission_classes = [IsAuthenticated]
+
+
             

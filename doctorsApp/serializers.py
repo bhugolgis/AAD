@@ -1,14 +1,38 @@
 from rest_framework import serializers
-from database.models import PatientPathlab
+from database.models import *
 
 class PatientsPathlabSerializer(serializers.ModelSerializer):
     class Meta:
         model = PatientPathlab
         fields = ['patientFamilyMember','LabTestSuggested']
         
-        
+
+class ViewPatientsPathlabSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PatientPathlab  
+        fields = "__all__"      
         
 
+class ViewAmoConsultancySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AmoConsultancy  
+        fields = "__all__" 
+
+
+class ViewPrimaryConsultancySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PrimaryConsultancy  
+        fields = "__all__"  
+        
+class ViewSecondaryConsultancySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SecondaryConsultancy  
+        fields = "__all__"  
+        
+class ViewTertiaryConsultancySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TertiaryConsultancy  
+        fields = "__all__"  
 
 # class ListPatientsPathlabSerializer(serializers.ModelSerializer):
 #     class Meta:
@@ -33,3 +57,58 @@ class ListPatientsPathlabSerializer(serializers.ModelSerializer):
             'patientFamilyMember_address',
             'patientFamilyMember_plotNo',
         ]
+
+
+class PatientPathlabSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PatientPathlab
+        fields = '__all__'
+
+class AmoConsultancySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AmoConsultancy
+        fields = '__all__'
+
+class PrimaryConsultancySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PrimaryConsultancy
+        fields = '__all__'
+
+class SecondaryConsultancySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SecondaryConsultancy
+        fields = '__all__'
+
+class TertiaryConsultancySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TertiaryConsultancy
+        fields = '__all__'
+
+class FamilyMemberDetailsSerializer(serializers.ModelSerializer):
+    pathlab_reports = PatientPathlabSerializer(many=True, read_only=True)
+    amo_consultancy = AmoConsultancySerializer(many=True, read_only=True)
+    primary_consultancy = PrimaryConsultancySerializer(many=True, read_only=True)
+    secondary_consultancy = SecondaryConsultancySerializer(many=True, read_only=True)
+    tertiary_consultancy = TertiaryConsultancySerializer(many=True, read_only=True)
+
+    class Meta:
+        model = familyMembers
+        fields = '__all__'
+
+class FamilyHeadDetailsSerializer(serializers.ModelSerializer):
+    family_head_member = FamilyMemberDetailsSerializer(many=True, read_only=True)
+
+
+    class Meta:
+        model = familyHeadDetails
+        fields = '__all__'
+        
+
+
+class ListFamilyHeadDetailsSerializer(serializers.ModelSerializer):
+    # family_head_member = FamilyMemberDetailsSerializer(many=True, read_only=True)
+
+
+    class Meta:
+        model = familyHeadDetails
+        fields = '__all__'
