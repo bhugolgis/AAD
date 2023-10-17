@@ -1,9 +1,9 @@
 from rest_framework import serializers
-from database.models import PatientsPathlab
+from database.models import PatientPathlab
 
 class PatientsPathlabSerializer(serializers.ModelSerializer):
     class Meta:
-        model = PatientsPathlab
+        model = PatientPathlab
         fields = ['patientFamilyMember','LabTestSuggested']
         
         
@@ -23,7 +23,7 @@ class ListPatientsPathlabSerializer(serializers.ModelSerializer):
     patientFamilyMember_plotNo = serializers.CharField(source='patientFamilyMember.family_head_member.plotNo', read_only=True)
 
     class Meta:
-        model = PatientsPathlab
+        model = PatientPathlab
         fields = [
             'patientFamilyMember_id',
             'LabTestSuggested',

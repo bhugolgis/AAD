@@ -3,7 +3,7 @@ from rest_framework import generics, permissions
 # Create your views here.
 from rest_framework import generics
 from rest_framework.response import Response
-from database.models import PatientsPathlab
+from database.models import PatientPathlab
 from doctorsApp.serializers import PatientsPathlabSerializer,ListPatientsPathlabSerializer
 from rest_framework.permissions import IsAuthenticated , AllowAny
 
@@ -16,7 +16,8 @@ class IsAllowedGroup(permissions.BasePermission):
 
 class LabTestSuggestedCreateView(generics.GenericAPIView):
     serializer_class = PatientsPathlabSerializer
-    permission_classes = (IsAuthenticated, IsAllowedGroup)
+    # permission_classes = (IsAuthenticated, IsAllowedGroup)
+    permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -27,7 +28,7 @@ class LabTestSuggestedCreateView(generics.GenericAPIView):
             lab_test_suggested = request.data.get('LabTestSuggested')
 
             # Check if lab tests already added for the patient
-            check_user_exists = PatientsPathlab.objects.filter(patientFamilyMember_id=patient_family_member_id)
+            check_user_exists = PatientPathlab.objects.filter(patientFamilyMember_id=patient_family_member_id)
             
             if check_user_exists:
                 return Response({
@@ -36,7 +37,7 @@ class LabTestSuggestedCreateView(generics.GenericAPIView):
                 })
 
             # Create a new instance of PatientsPathlab
-            insert_lab_test = PatientsPathlab.objects.create(
+            insert_lab_test = PatientPathlab.objects.create(
                 patientFamilyMember_id=patient_family_member_id,
                 LabTestSuggested=lab_test_suggested,
                 suggested_by_doctor=request.user
@@ -83,4 +84,4 @@ class ListPatientsPathlabView(generics.ListAPIView):
     fields = ['patientFamilyMember__familyHead__area', 'suggested_by_doctor', 'LabTestSuggested', 'PatientSampleTaken', 'PathLab', 'ReportCheckByDoctor', 'LabTestReport', 'doctorRemarks', 'PathLabRemarks', 'response_date', 'created_date', 'isCompleted']
 
     def get_queryset(self):
-        return PatientsPathlab.objects.all()
+        return PatientPathlab.objects.all()
