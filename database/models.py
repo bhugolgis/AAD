@@ -13,8 +13,13 @@ class ward(models.Model):
     def __str__(self) -> str:
          return self.wardName
 
+class dispensary(models.Model):
+    dispensaryName = models.CharField(max_length=255 , blank = True , null = True )
+
+
 class healthPost(models.Model):
     ward = models.ForeignKey(ward , related_name="ward_name" , on_delete=models.SET_NULL , blank = True , null = True )
+    dispensary = models.ForeignKey(dispensary, related_name="dispensarys_name", on_delete=models.SET_NULL, blank = True, null = True )
     healthPostName = models.CharField(max_length= 1000, unique= True ,  blank = True , null = True )
 
     def __str__(self) -> str:
@@ -37,6 +42,7 @@ class Dispensary(models.Model):
     location = models.CharField(max_length=255,blank=True,null=True,default="")
     contact_number = models.CharField(max_length=15,blank=True,null=True,default="")
 
+<<<<<<< HEAD
 
     health_posts = models.ManyToManyField(healthPost, through='DispensaryHealthPostAssociation')
 
@@ -60,6 +66,8 @@ class DispensaryHealthPostAssociation(models.Model):
 
     
 
+=======
+>>>>>>> cb878f1523761c2a4b09e7ffb8a4a9a6e1da8d39
 
     
 class CustomUser(AbstractUser, PermissionsMixin):
