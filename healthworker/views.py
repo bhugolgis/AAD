@@ -7,6 +7,7 @@ from rest_framework import status
 from rest_framework.parsers import MultiPartParser , JSONParser
 from rest_framework.permissions import IsAuthenticated
 import random
+from .permissions import IsHealthworker
 from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser
 from rest_framework import filters
@@ -16,6 +17,7 @@ from django.contrib.auth.models import Group
 
 
 class verifyMobileNumber(APIView):
+    permission_classes = (IsAuthenticated , IsHealthworker)
     def get(self , request ,mobileNo):
         family_head = familyHeadDetails.objects.filter( mobileNo = mobileNo).exists()
         user = CustomUser.objects.filter(phoneNumber = mobileNo).exists()
@@ -27,6 +29,7 @@ class verifyMobileNumber(APIView):
                             'message' : 'verify successfully' } , status= status.HTTP_200_OK)
             
 class veirfyaadharCard(APIView):
+    permission_classes = (IsAuthenticated, IsHealthworker)
     def get(self , request ,aadharCard):
         data = familyMembers.objects.filter( aadharCard = aadharCard).exists()
         if data:
@@ -37,6 +40,7 @@ class veirfyaadharCard(APIView):
                             'message' : 'verify successfully' } , status= status.HTTP_200_OK)
         
 class verifyabhaId(APIView):
+    permission_classes = (IsAuthenticated , IsHealthworker)
     def get(self , request ,abhaId):
         data = familyMembers.objects.filter( abhaId = abhaId).exists()
         if data:
@@ -48,7 +52,7 @@ class verifyabhaId(APIView):
 
 class PostSurveyForm(generics.GenericAPIView):
     serializer_class = PostSurveyFormSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = (IsAuthenticated , IsHealthworker)
     parser_classes = [JSONParser]
 
     def post(self , request , *args , **kwargs):
@@ -91,7 +95,7 @@ class PostSurveyForm(generics.GenericAPIView):
 # The class `GetFamilyHeadList` is a generic ListAPIView that retrieves a list of family head details
 # and allows filtering by mobile number, name, and family ID.
 class GetFamilyHeadList(generics.ListAPIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = (IsAuthenticated , IsHealthworker)
     serializer_class = GetFamilyHeadListSerialzier
     filter_backends = (filters.SearchFilter,)
     search_fields = ['mobileNo', 'name', 'familyId']
@@ -102,7 +106,7 @@ class GetFamilyHeadList(generics.ListAPIView):
         return queryset
 
 class GetPartiallyInsertedRecord(generics.ListAPIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes =(IsAuthenticated , IsHealthworker)
     serializer_class = GetFamilyHeadListSerialzier
     filter_backends = (filters.SearchFilter,)
      
@@ -114,7 +118,7 @@ class GetPartiallyInsertedRecord(generics.ListAPIView):
 
 class PostFamilyDetails(generics.GenericAPIView):
     serializer_class = postFamilyMemberDetailSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = (IsAuthenticated , IsHealthworker)
     # parser_classes = [MultiPartParser]
     def post(self , request , *args , **kwargs):
         """
@@ -151,7 +155,7 @@ class PostFamilyDetails(generics.GenericAPIView):
 # The class `GetFamilyMembersDetails` is a generic ListAPIView that retrieves details of family
 # members and allows filtering based on family ID, mobile number, and name.
 class GetFamilyMembersDetails(generics.ListAPIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = (IsAuthenticated , IsHealthworker)
     serializer_class = GetFamilyMemberDetailSerializer  
     filter_backends = (filters.SearchFilter,)
     search_fields = ['familyHead__familyId' , 'familyHead__mobileNo' , 'familyHead__name' , 'memberId'  ]
@@ -165,7 +169,7 @@ class GetFamilyMembersDetails(generics.ListAPIView):
 class UpdateFamilyDetails(generics.GenericAPIView):
 
     serializer_class = UpdateFamilyMemberDetailSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = (IsAuthenticated , IsHealthworker)
     # parser_classes = [MultiPartParser]
 
     def patch(self , request , id , *args , **kwargs):
@@ -193,7 +197,7 @@ class UpdateFamilyDetails(generics.GenericAPIView):
         
         
 class GetSurveyorCountDashboard(generics.GenericAPIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = (IsAuthenticated , IsHealthworker)
     queryset = familyMembers.objects.all()
     FamilySurvey_count = familyHeadDetails.objects.all()
     serializer_class = GetFamilyMemberDetailSerializer
@@ -221,7 +225,7 @@ class GetSurveyorCountDashboard(generics.GenericAPIView):
 class GetCitizenList(generics.ListAPIView):
     serializer_class = GetCitizenListSerializer
     model = serializer_class.Meta.model
-    permission_classes = [IsAuthenticated]
+    permission_classes = (IsAuthenticated , IsHealthworker)
     filter_backends = (filters.SearchFilter,)
     search_fields = ['familyHead__familyId' , 'familyHead__mobileNo' , 'familyHead__name' , 'memberId' , 'name' , 'mobileNo' ]
     paginate_by = 100
@@ -266,7 +270,7 @@ class GetCitizenList(generics.ListAPIView):
 class GetFamilyList(generics.ListAPIView):
     serializer_class = GetFamilyHeadListSerialzier
     model = serializer_class.Meta.model
-    permission_classes = [IsAuthenticated]
+    permission_classes = (IsAuthenticated , IsHealthworker)
     filter_backends = (filters.SearchFilter,)
     search_fields = ['familyHead__familyId' , 'familyHead__mobileNo' , 'familyHead__name' , 'memberId' , 'name' , 'mobileNo' ]
     paginate_by = 100
@@ -306,7 +310,7 @@ class GetFamilyList(generics.ListAPIView):
 class GetBloodCollectionDetail(generics.ListAPIView):
     queryset = familyMembers.objects.all()
     serializer_class = GetCitizenListSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes =(IsAuthenticated , IsHealthworker)
     filter_backends = (filters.SearchFilter,)
     search_fields = ['bloodCollectionLocation']
 
@@ -346,7 +350,3 @@ class DumpExcelInsertxlsx(generics.GenericAPIView):
             return Response({'message' : 'Something Went wrong please check you File', 
                              'error' : str(e),
                             'status' :"success"} , status= status.HTTP_400_BAD_REQUEST)
-
-
-
-

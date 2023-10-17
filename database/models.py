@@ -13,8 +13,13 @@ class ward(models.Model):
     def __str__(self) -> str:
          return self.wardName
 
+class dispensary(models.Model):
+    dispensaryName = models.CharField(max_length=255 , blank = True , null = True )
+
+
 class healthPost(models.Model):
     ward = models.ForeignKey(ward , related_name="ward_name" , on_delete=models.SET_NULL , blank = True , null = True )
+    dispensary = models.ForeignKey(dispensary, related_name="dispensarys_name", on_delete=models.SET_NULL, blank = True, null = True )
     healthPostName = models.CharField(max_length= 1000, unique= True ,  blank = True , null = True )
 
     def __str__(self) -> str:
@@ -31,13 +36,6 @@ class section(models.Model):
 
     def __str__(self) -> str:
          return self.sectionName
-
-class dispensary(models.Model):
-    disphealthPost = models.ForeignKey(healthPost , related_name="disp_healthpost_name" , on_delete=models.SET_NULL , blank= True , null = True )
-    dispensaryName = models.CharField(max_length=255 , blank = True , null = True )
-
-
-    
 
 
     
